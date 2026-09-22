@@ -12,6 +12,9 @@ warnings.filterwarnings('ignore')
 def best_subset(X, y, cri='rss'):
     n_features = X.shape[1]
     n_samples = X.shape[0]
+    X_full = sm.add_constant(X)
+    full_model = sm.OLS(y, X_full).fit()
+    mse_full = np.sum(full_model.resid ** 2) / (n_samples - X_full.shape[1])
     
     best_models = {}
     
@@ -23,7 +26,9 @@ def best_subset(X, y, cri='rss'):
             variables = [X.columns[i] for i in subset]
             
             # 메트릭 계산
-            metrics = calculate_metrics(X, y, variables, n_samples, k + 1)  # +1 for intercept
+            metrics = calculate_metrics(
+                X, y, variables, n_samples, k + 1, mse_full=mse_full
+            )  # +1 for intercept
             current_score = metrics[cri.upper()]
             
             # 최적 모델 선택 : AIC, BIC, RSS는 작을수록 좋고, Cp, Adj_R2는 클수록 좋음
@@ -53,7 +58,9 @@ def forward_selection(X, y, cri='rss'):
     remaining = list(range(n_features))
     models = {}
     
-    # 모든 변수를 선택할 때까지 반복
+    current_score = None
+
+    # 기준이 개선되는 동안 가장 좋은 변수를 하나씩 추가
     for k in range(1, n_features + 1):
         best_score = float('inf') if cri.lower() in ['aic', 'bic', 'rss'] else float('-inf')
         best_feature = None
@@ -64,20 +71,28 @@ def forward_selection(X, y, cri='rss'):
             
             # 메트릭 계산
             metrics = calculate_metrics(X, y, variables, n_samples, len(current_features) + 1)  # +1 for intercept
-            current_score = metrics[cri.upper()]
+            candidate_score = metrics[cri.upper()]
             
             # 최적 변수 선택
             if cri.lower() in ['aic', 'bic', 'rss']:
-                is_better = current_score < best_score
+                is_better = candidate_score < best_score
             else:  # cp, adj_r2
-                is_better = current_score > best_score
+                is_better = candidate_score > best_score
             
             if is_better:
-                best_score = current_score
+                best_score = candidate_score
                 best_feature = feature
         
+        # 더 이상 기준이 개선되지 않으면 현재 경로를 종료
+        if current_score is not None:
+            improves = (best_score < current_score if cri.lower() in ['aic', 'bic', 'rss']
+                        else best_score > current_score)
+            if not improves:
+                break
+
         selected.append(best_feature)
         remaining.remove(best_feature)
+        current_score = best_score
         
         models[k] = {
             'variables': [X.columns[i] for i in selected],
@@ -105,7 +120,9 @@ def backward_elimination(X, y, cri='rss'):
         'indices': tuple(selected)
     }
     
-    # 변수를 하나씩 제거
+    current_score = metrics[cri.upper()]
+
+    # 기준이 개선되는 동안 가장 적절한 변수를 하나씩 제거
     for k in range(n_features - 1, 0, -1):
         best_score = float('inf') if cri.lower() in ['aic', 'bic', 'rss'] else float('-inf')
         worst_feature = None
@@ -116,19 +133,26 @@ def backward_elimination(X, y, cri='rss'):
             
             # 메트릭 계산
             metrics = calculate_metrics(X, y, variables, n_samples, len(current_features) + 1)  # +1 for intercept
-            current_score = metrics[cri.upper()]
+            candidate_score = metrics[cri.upper()]
             
             # 최적 변수 선택 (제거할 변수)
             if cri.lower() in ['aic', 'bic', 'rss']:
-                is_better = current_score < best_score
+                is_better = candidate_score < best_score
             else:  # cp, adj_r2
-                is_better = current_score > best_score
+                is_better = candidate_score > best_score
             
             if is_better:
-                best_score = current_score
+                best_score = candidate_score
                 worst_feature = feature
         
+        # 어떤 변수도 제거해서 기준을 개선할 수 없으면 현재 경로를 종료
+        improves = (best_score < current_score if cri.lower() in ['aic', 'bic', 'rss']
+                    else best_score > current_score)
+        if not improves:
+            break
+
         selected.remove(worst_feature)
+        current_score = best_score
         
         models[k] = {
             'variables': [X.columns[i] for i in selected],
@@ -214,7 +238,7 @@ def hybrid_stepwise(X, y, cri='rss'):
     return models
 
 
-def calculate_metrics(X, y, variables, n, p):
+def calculate_metrics(X, y, variables, n, p, mse_full=None):
     X_subset = X[variables]
     X_subset = sm.add_constant(X_subset)
     
@@ -224,9 +248,10 @@ def calculate_metrics(X, y, variables, n, p):
     rss = np.sum(model.resid ** 2)
     
     # MSE for Cp
-    X_full = sm.add_constant(X)
-    full_model = sm.OLS(y, X_full).fit()
-    mse_full = np.sum(full_model.resid ** 2) / (n - X_full.shape[1])
+    if mse_full is None:
+        X_full = sm.add_constant(X)
+        full_model = sm.OLS(y, X_full).fit()
+        mse_full = np.sum(full_model.resid ** 2) / (n - X_full.shape[1])
     
     # Cp
     cp = rss / mse_full - n + 2 * p
