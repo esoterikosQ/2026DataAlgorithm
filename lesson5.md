@@ -269,7 +269,7 @@ $n \ll p$가 가장 심한 분야 중 하나는 자연어 처리이다. 자연�
 & \boldsymbol X \in \mathbb R^{(n \times p)}, \ \boldsymbol Y \in \mathbb R^{(m \times q)} \\
 & \boldsymbol U = \boldsymbol {a'X} \\
 & \boldsymbol V = \boldsymbol {b'Y} \\
-& \underset{U, V}{\operatorname{arg\,max}} \ \operatorname{Corr}(U, V)
+& \underset{U, V}{\arg\max} \ \mathrm{Corr}(U, V)
 \end{aligned}
 ```
 
