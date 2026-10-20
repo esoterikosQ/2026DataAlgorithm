@@ -97,7 +97,7 @@ d(x_i, x_j) = \sqrt {\sum_{h = 1}^p \bigg ( \frac { x_{ih} - x_{jh} }{ \sigma_h 
 다변량 데이터셋의 표준화 거리를 행렬식으로 표현하면 다음과 같다.
 
 ```math
-d(\boldsymbol X) = \sqrt { \boldsymbol X D^{-1} \boldsymbol X'}
+d(\boldsymbol X) = \sqrt { \mathrm{diag}(\boldsymbol X \boldsymbol D^{-1} \boldsymbol X') \boldsymbol 1' + \boldsymbol 1 \, \mathrm{diag}(\boldsymbol X \boldsymbol D^{-1} \boldsymbol X')' - 2 \boldsymbol X \boldsymbol D^{-1} \boldsymbol X'}
 ```
 
 이때, $\boldsymbol D$는 각 변수의 분산을 대각원소로 가지는 대각행렬이다.
@@ -131,7 +131,7 @@ d(x_i, x_j) = \sqrt { (\boldsymbol x_i - \boldsymbol x_j)' \Sigma^{-1} (\boldsym
 다변량 데이터셋의 마할라노비스 거리를 행렬식으로 표현하면 다음과 같다.
 
 ```math
-d(\boldsymbol X) = \sqrt { \boldsymbol X \Sigma^{-1} \boldsymbol X'}
+d(\boldsymbol X) = \sqrt { \mathrm{diag}(\boldsymbol X \Sigma^{-1} \boldsymbol X') \boldsymbol 1' + \boldsymbol 1 \, \mathrm{diag}(\boldsymbol X \Sigma^{-1} \boldsymbol X')' - 2 \boldsymbol X \Sigma^{-1} \boldsymbol X'}
 ```
 
 이때, $\boldsymbol \Sigma$는 분산/공분산 행렬이다.
