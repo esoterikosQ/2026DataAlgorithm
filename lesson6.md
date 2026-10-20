@@ -97,7 +97,7 @@ d(x_i, x_j) = \sqrt {\sum_{h = 1}^p \bigg ( \frac { x_{ih} - x_{jh} }{ \sigma_h 
 다변량 데이터셋의 표준화 거리를 행렬식으로 표현하면 다음과 같다.
 
 ```math
-d(\boldsymbol X) = \sqrt { \mathrm{diag}(\boldsymbol X \boldsymbol D^{-1} \boldsymbol X') \boldsymbol 1' + \boldsymbol 1 \, \mathrm{diag}(\boldsymbol X \boldsymbol D^{-1} \boldsymbol X')' - 2 \boldsymbol X \boldsymbol D^{-1} \boldsymbol X'}
+d(\boldsymbol X) = \sqrt { \boldsymbol X D^{-1} \boldsymbol X'}
 ```
 
 이때, $\boldsymbol D$는 각 변수의 분산을 대각원소로 가지는 대각행렬이다.
@@ -167,7 +167,7 @@ d(x_i, x_j) = 1 - J(x_i, x_j)
 C(x_i, x_j) = \frac { x_i' x_j } {\| x_i \| \| x_j \|} = cos \theta
 ```
 
-$\| x_i \|$는 벡터 $\boldsymbol x_i$의 단위벡터(의미상 노름의 단위로 이해할 수 있습니다.)로, $\| x_i \| = \sqrt { \sum_h x_{ih}^2 }$으로 정의된다. 유클리드 평면에서 코사인 유사도는 두 벡터의 방향 차이를 나타내는 각도에 대한 코사인 값과 같아진다.
+$\| x_i \|$는 벡터 $\boldsymbol x_i$의 유클리드 노름(의미상 노름의 단위로 이해할 수 있습니다.)로, $\| x_i \| = \sqrt { \sum_h x_{ih}^2 }$으로 정의된다. 유클리드 평면에서 코사인 유사도는 두 벡터의 방향 차이를 나타내는 각도에 대한 코사인 값과 같아진다.
 
 
 코사인 유사도를 기반으로 하는 코사인 거리는 다음과 같이 정의할 수 있다.
