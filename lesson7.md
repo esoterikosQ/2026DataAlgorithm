@@ -65,6 +65,7 @@
 
 > [BERTopic에 대한 간단한 설명](https://wikidocs.net/162076)  
 > [BERTopic 개발자의 공식 홈페이지상 설명](https://maartengr.github.io/BERTopic/algorithm/algorithm.html#6-optional-fine-tune-topic-representation)
+> lesson7_app3.pdf 참조
 
 문서기반의 토픽 모델링 패키지로 많이 활용되는 BERTopic입니다. 기본적인 아이디어는 자연어로 구성된 문서를 임베딩하고, 다차원의 벡터값으로 임베딩한 자연어 데이터를 UMAP을 이용하여 차원축소한 후, HDBSCAN 방식으로 군집화하여 유사성이 높은 군집으로 묶은 후, 임베딩한 값을 다시 자연어로 환원하여 군집별로 핵심 주제를 담고 있는 토큰값으로 다시 환원하는 것입니다. 
 
