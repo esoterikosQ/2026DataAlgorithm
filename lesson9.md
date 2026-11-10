@@ -8,19 +8,19 @@
 다변량 시계열 데이터를 회귀모형에 적합하면 각각의 시점에 대한 회귀모형은 다음과 같이 구조화할 수 있다. ($\boldsymbol X_t$는 ($1 \times p$) 차원의 벡터, $\boldsymbol \beta$는 ($p \times 1$)차원의 벡터)
 
 ```math
-y_t = \boldsymbol {X_t \beta} + \eta_t \tag{1}
+y_t = \boldsymbol {X_t \beta} + \eta_t \text{(1)}
 ```
 
 여기에서 시점 간에 p차 자기상관이 있다면 위 회귀모형의 오차항은 다음과 같이 풀어서 쓸 수 있다.
 
 ```math
-\eta_t = \rho \eta_{t-p} + \epsilon_t \tag{2}
+\eta_t = \rho \eta_{t-p} + \epsilon_t \text{(2)}
 ```
 
 식(1)과 식(2)를 연립하면 다음과 같은 모형이 된다.
 
 ```math
-y_t = \boldsymbol {X_t \beta} + \rho \eta_{t-p} + \epsilon_t \tag{3}
+y_t = \boldsymbol {X_t \beta} + \rho \eta_{t-p} + \epsilon_t \text{(3)}
 ```
 
 시계열의 경우 일반적인 선형모형과 달리 $\epsilon_t$가 무작위성을 가지지 않는다. 즉, 백색잡음의 경우에도 안정 시계열의 조건인 평균, 분산, 공분산에서 규칙성을 가지기 때문에 일반적인 선형회귀와 달리 식(3)을 그대로 회귀모형으로 사용할 수 없다. 이러한 시계열 데이터의 특수성을 회귀모형에 반영한 것이 PW 방법이다.
@@ -34,7 +34,7 @@ PW 방법의 전개 순서는 다음과 같다.
 (2) 시계열 데이터가 AR(p)의 구조를 가지고 있다고 가정할 때,(1)단계에서 생성된 잔차 $\eta_t$는 다음과 같은 형태를 가진다.
 
 ```math
-\eta_t = \phi_1 \eta_{t-1} + \cdots + \phi_p \eta_{t-p} + \epsilon_t \tag{4}
+\eta_t = \phi_1 \eta_{t-1} + \cdots + \phi_p \eta_{t-p} + \epsilon_t \text{(4)}
 ```
 
 위 모형에 (1)단계의 잔차를 적합하여 자기상관계수 벡터($\phi_1, \phi_2, \cdots, \phi_p$)를 추정한다.
@@ -42,18 +42,18 @@ PW 방법의 전개 순서는 다음과 같다.
 (3) 설명변수, 반응변수, 상수항을 (2)단계에서 계산한 자기상관계수 벡터를 이용하여 준차분(quasi-diffrencce)한 값을 계산한다.
 
 ```math
-y_t^* = y_t - \sum_{i=1}^p \phi_i y_{t-i}
+y_t^* = y_t - \sum_{i=1}^p \phi_i y_{t-i} 
 ```
 
 ```math
-\boldsymbol {X_t^*} = \boldsymbol{X_t} - \sum_{i=1}^p \phi_i \boldsymbol {x_{t-i}}
+\boldsymbol {X_t^*} = \boldsymbol{X_t} - \sum_{i=1}^p \phi_i \boldsymbol {x_{t-i}} 
 ```
 
 ```math
 \boldsymbol {1_t^*} = \boldsymbol 1 - \sum_{i=1}^p \phi_i 
 ```
 
-이 때에 첫 시점의 관측치에 대해서는 상관계수 행렬의 촐레스키 분해값의 맨 앞 p행의 값을 가중치로 두어 계산한다. (여기에서 $\boldsymbol 1$은 1로 구성된 벡터를 의미합니다.)
+이 때에 첫 $p-1$개 관측치에 대해서는 각 시점 오차의 상관계수 행렬의 촐레스키 분해값(의미상 상관계수 행렬의 제곱근과 유사한 의미입니다.)의 맨 앞 $p-1$개행까지의 값을 가중치로 두어 별도로 계산한다. (여기에서 $\boldsymbol 1$은 1로 구성된 벡터를 의미합니다.)
 
 (4) (3)단계에서 갱신된 값을 이용하여 회귀모형을 적합한 후 새로운 $\boldsymbol {\beta^*}$를 계산한다.
 
@@ -77,16 +77,49 @@ VAR 모형은 다변량 시계열 데이터에서 여러 개의 변수가 상호
 두 개의 변수로 이루어진 벡터 시계열이 1차에 거쳐 상호 영향을 미친다고 가정하면, 두 벡터의 시계열 데이터 구조는 다음과 같이 표현할 수 있다.
 
 ```math
-x_t = \mu_1 + \alpha_1 x_{t-1} + \beta_1 y_{t-1} + \epsilon_{1t} \\
+x_t = \mu_1 + \alpha_1 x_{t-1} + \beta_1 y_{t-1} + \epsilon_{1t}
+```
 
+```math
 y_t = \mu_2 + \alpha_2 x_{t-1} + \beta_2 y_{t-1} + \epsilon_{2t} 
 ```
 
 위 식을 벡터 시계열 데이터 $\boldsymbol X_t$의 형식으로 다음과 같이 나타낼 수 있다. 
 
 ```math
-\boldsymbol X_t = \boldsymbol \mu + \boldsymbol {A X_{t-1}} + \boldsymbol \epsilon_t \tag{5}
+\boldsymbol X_t = \boldsymbol \mu + \boldsymbol {A X_{t-1}} + \boldsymbol \epsilon_t \text{(5)}
 ```
+
+식(5)의 각 벡터와 행렬을 성분으로 풀어 쓰면 다음과 같다.
+
+```math
+\boldsymbol X_t = \begin{pmatrix} x_t \\ y_t \end{pmatrix},
+\qquad
+\boldsymbol \mu = \begin{pmatrix} \mu_1 \\ \mu_2 \end{pmatrix},
+\qquad
+\boldsymbol X_{t-1} = \begin{pmatrix} x_{t-1} \\ y_{t-1} \end{pmatrix}
+```
+
+```math
+\boldsymbol A = \begin{pmatrix} \alpha_1 & \beta_1 \\ \alpha_2 & \beta_2 \end{pmatrix},
+\qquad
+\boldsymbol \epsilon_t = \begin{pmatrix} \epsilon_{1t} \\ \epsilon_{2t} \end{pmatrix}
+```
+
+이를 식(5)에 대입하면 다음과 같다.
+
+```math
+\begin{pmatrix} x_t \\ y_t \end{pmatrix}
+=
+\begin{pmatrix} \mu_1 \\ \mu_2 \end{pmatrix}
++
+\begin{pmatrix} \alpha_1 & \beta_1 \\ \alpha_2 & \beta_2 \end{pmatrix}
+\begin{pmatrix} x_{t-1} \\ y_{t-1} \end{pmatrix}
++
+\begin{pmatrix} \epsilon_{1t} \\ \epsilon_{2t} \end{pmatrix}
+```
+
+계수 행렬의 각 행은 각각 현재 시점의 x와 y에 대한 식에 대응하고, 각 열은 직전 시점의 x와 y에 곱해지는 계수에 대응한다.
 
 이때, $\boldsymbol X_t, \boldsymbol \mu, \boldsymbol X_{t-1}, \boldsymbol \epsilon_t$는 ($2 \times 1$)차원 벡터, $\boldsymbol A$는 ($2 \times 2$)차원의 행렬이다. 이러한 벡터 시계열 구조를 VAR(1) 구조라고 한다. 이 구조는 AR 모형뿐만 아니라 MA, ARMA 모형에도 동일하게 적용이 가능하다. 하지만 ARMA 모형의 경우 자기상관계수와 부분자기상관계수뿐만 아니라 교차상관계수까지 고려해야해서 적절한 차수를 선정하기가 어렵기 때문에 일반적으로는 AR 구조를 응용한 VAR 모형을 활용한다. 
 
@@ -96,7 +129,7 @@ y_t = \mu_2 + \alpha_2 x_{t-1} + \beta_2 y_{t-1} + \epsilon_{2t}
 \boldsymbol X_t = \boldsymbol \mu + \boldsymbol {A_1 X_{t-1}} + \cdots + \boldsymbol {A_p X_{t-p}} + \boldsymbol \epsilon_t
 ```
 
-안정 시계열을 이루는 위 VAR 모형의 오차 벡터는 (1) 모든 오차항의 기댓값은 0이고, (2) 오차항 내부의 원소 간에는 상관관계가 존재할 수 있고, (3) 오차 벡터 간의 상관관계는 0이다.
+안정 시계열을 이루는 위 VAR 모형의 오차 벡터 $\epsilon_t$는 (1) 모든 오차항의 기댓값은 0이고, (2) 오차항 내부의 원소 간에는 상관관계가 존재할 수 있고, (3) 오차 벡터 간의 상관관계는 0인 특성을 가진다.
 
 위와 같은 오차항의 상관관계 속성이 존재함에도 VAR 모형의 모든 항은 ($\boldsymbol X_{t-1}, \cdots, \boldsymbol X_{t-p}$)의 동일한 입력 데이터를 가지기 때문에 GLS 방법이 아닌 OLS 방법을 통해서도 해를 구할 수 있는 특징을 가진다. 
 
@@ -110,7 +143,7 @@ y_t = \mu_2 + \alpha_2 x_{t-1} + \beta_2 y_{t-1} + \epsilon_{2t}
 
 #### 9.2.3. 인과관계 검정
 
-이렇게 적합한 VAR 모형은 동태적인 변수 간의 상호작용 양상만을 보여줄 뿐 해석에 관한 가이드를 제공해주지는 않는다. 이러한 문제를 보완하기 위해 인과관계를 분석할 수 있다. 기본적인 아이디어는 벡터 시계열 데이터의 구성요소 $y_t$에 $x$의 상관계수가 0인지 아닌지를 검정하는 것이다. 이를 그랜저 인과(Granger-cause)라고 한다. 인과관계 분석을 위해서는 $y$만을 이용한 모형과 $x$를 포함한 모형 간의 F 통계량이나 Wald 통계량을 이용한 적합도 검정 방법을 이용한다.
+이렇게 적합한 VAR 모형은 동태적인 변수 간의 상호작용 양상만을 보여줄 뿐 해석에 관한 가이드를 제공해주지는 않는다. 이러한 문제를 보완하기 위해 인과관계를 분석할 수 있다. 기본적인 아이디어는 벡터 시계열 데이터의 구성요소 $y_t$에 $x_{t-p}$의 상관계수가 0인지 아닌지를 검정하는 것이다. 만약, 모든 상관계수가 0이라는 귀무가설을 기각할 수 있으면 $x_{t-p}$가 $y_t$에 대해 그랜저 인과(Granger-cause) 관계에 있다고 한다. 그랜저 인과 관계를 확인하기 위해서는 $y$만을 이용한 모형과 $x$를 포함한 모형 간의 F 통계량이나 Wald 통계량을 이용한 적합도 검정 방법을 이용한다.
 
 그 밖에도 일변수에 미치는 충격이 다른 변수에 미치는 충격반응분석, 여러 변수 간 상호작용이 있을 때에 어느 변수가 상대적으로 중요한 정도를 가지는지를 확인하는 예측오차 분산분해 기법 등을 통해 변수 간의 상호관계를 좀 더 자세하게 파악할 수 있다.
 
@@ -131,7 +164,7 @@ y_t = \mu_2 + \alpha_2 x_{t-1} + \beta_2 y_{t-1} + \epsilon_{2t}
 푸리에 급수는 주기함수를 분해하는 원리에 관한 이론이다. 주기 t에 맞춰 반복하는 함수를 사인과 코사인 곡선의 선형 조합으로 분해할 수 있다는 이론이다.
 
 ```math
-X(t) = \sum_{n = 0}^\infty (a_n \sin {n \omega t} + b_n \cos n \omega t) + c_0 \tag{6}
+X(t) = \sum_{n = 0}^\infty (a_n \sin {n \omega t} + b_n \cos n \omega t) + c_0 \text{(6)}
 ```
 
 식(6)에서 $\omega = 2\pi/t$로 주파수의 단위이다. 
@@ -139,7 +172,7 @@ X(t) = \sum_{n = 0}^\infty (a_n \sin {n \omega t} + b_n \cos n \omega t) + c_0 \
 한편, 오일러의 공식은 자연상수의 거듭제곱을 삼각함수로 연결하는 식으로 아래와 같이 표현할 수 있다.
 
 ```math
-e^{ix} = \cos x + i \sin x \tag{7}
+e^{ix} = \cos x + i \sin x \text{(7)}
 ```
 
 (식(7)에서 $x = \pi$를 대입하면 $e^{i \pi} + 1 = 0$ 형태의 오일러의 항등식이 됩니다.)
@@ -147,7 +180,7 @@ e^{ix} = \cos x + i \sin x \tag{7}
 식(7)을 식(6)에 대입하면 다음과 같은 복소지수 함수 형태로 정리할 수 있다.
 
 ```math
-X(t) = \sum_{n = -\infty}^\infty \gamma_n e^{i n \omega t} \tag{8}
+X(t) = \sum_{n = -\infty}^\infty \gamma_n e^{i n \omega t} \text{(8)}
 ```
 
 식(8)에서 $\gamma$는 $a_n, b_n$에 따라 결정되는 계수이다. 이상의 변환을 통해 주파수 분해의 문제를 두 개의 삼각함수에 관한 문제($(a_n, b_n), c_0$를 찾는 문제)에서 복소 평면이라는 단일 평면에서 해를 찾는 문제( $\boldsymbol \gamma$를 찾는 문제)로 간결화할 수 있다. 또, 미분이나 적분이 복잡한 삼각함수 대신 지수함수 형태로 주파수 분해 문제를 변환함으로써 대수적인 접근과 해석이 용이해진다. 
