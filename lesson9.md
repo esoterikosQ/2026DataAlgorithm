@@ -42,11 +42,15 @@ PW 방법의 전개 순서는 다음과 같다.
 (3) 설명변수, 반응변수, 상수항을 (2)단계에서 계산한 자기상관계수 벡터를 이용하여 준차분(quasi-diffrencce)한 값을 계산한다.
 
 ```math
-y_t^* = y_t - \sum_{i=1}^p \phi_i y_{t-i} \\ \\
+y_t^* = y_t - \sum_{i=1}^p \phi_i y_{t-i}
+```
 
-\boldsymbol {X_t^*} = \boldsymbol{X_t} - \sum_{i=1}^p \phi_i \boldsymbol {x_{t-i}} \\ \\
+```math
+\boldsymbol {X_t^*} = \boldsymbol{X_t} - \sum_{i=1}^p \phi_i \boldsymbol {x_{t-i}}
+```
 
-\boldsymbol {1_t^*} = \boldsymbol 1 - \sum_{i=1}^p \phi_i \\\\
+```math
+\boldsymbol {1_t^*} = \boldsymbol 1 - \sum_{i=1}^p \phi_i 
 ```
 
 이 때에 첫 시점의 관측치에 대해서는 상관계수 행렬의 촐레스키 분해값의 맨 앞 p행의 값을 가중치로 두어 계산한다. (여기에서 $\boldsymbol 1$은 1로 구성된 벡터를 의미합니다.)
